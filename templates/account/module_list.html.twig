@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Список добавленых модулей {{module.name}} {% endblock %}
+ {% block stylesheets %}
+     <!-- Custom styles for this page -->
+
+ {% endblock %}
+{% block body %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Список добавленых модулей {{module.name}}</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="d-inline-block m-0 font-weight-bold text-primary"class="" style="width: 88%;/* float: left; */">Модули {{module.name}}</div>
+        <div class="d-inline-block">
+        <span class=""><a href="/account/module/{{module.code}}/add" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                        class="fas fa-plus fa-sm text-white-50"></i> Добавить настройки</a></span>
+
+        </div>
+    </div>
+    <div class="card-body">
+    <div class="table-responsive">
+    {% if app.user %}
+      {% if settingsData %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название модуля в RetailCrm</th>
+                <th scope="col">-</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for settingsDataItem in settingsData %}
+            <tr>
+                <th scope="row">{{ settingsDataItem.id }}</th>
+                 <td>{{ settingsDataItem.settings.moduleName }}</td>
+
+                <td><a href="{{ path('account_edit_module', {codeModule:module.code, id:settingsDataItem.id}) }}">
+                        <i class="fa fa-edit"></i></a> |
+                    <a href="{{ path('account_delete_module', {codeModule:module.code, id:settingsDataItem.id}) }}" data-toggle="modal" class="delModal" onclick="confirmModal(this)" data-target="myModal"><i class="fa fa-eraser"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        </div>
+        </div>
+
+{#modal window confirmation delete#}
+          <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title">Предупреждение уделения настроек</h5>
+                          <button type="button" class=" fn_close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                          <p>Удалить вібранніе настройки?</p>
+                      </div>
+                      <div class="modal-footer">
+                          <a class="btn btn-primary fn_delete" id="fn_delete">Подтвердить</a>
+                          <button type="button" class="btn btn-secondary fn_close" data-dismiss="modal">Отменить</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% endif %}
+    {% endif %}
+{% block javascripts %}
+<script>
+    function confirmModal(href)
+    {
+        $('#fn_delete').attr('href', href.href);
+        // $("#delModal").preventDefault();
+        $("#myModal").modal("show");
+
+    }
+    $(".fn_close").click(function(){
+        $("#myModal").modal("hide");
+    });
+    $(".fn_delete").click(function(){
+        $("#myModal").modal("hide");
+    });
+    $('#myModal').on('shown.bs.modal', function () {
+        // $('#myInput').trigger('focus')
+    })
+</script>
+    {% endblock %}
+{% endblock %}

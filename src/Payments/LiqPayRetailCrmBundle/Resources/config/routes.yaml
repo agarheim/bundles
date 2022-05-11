@@ -1,0 +1,3 @@
+#cabinet:
+#    path: /cabinet
+#    controller: App\Payments\LiqPayRetailCrmBundle\Controller::cabinet

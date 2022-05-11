@@ -1,0 +1,10 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+manager_modules_modules_bundle:
+ resource: '@ManagerModulesModulesBundle/Resources/config/annotations.yaml'
+payments_liq_pay_retail_crm_bundle:
+ resource: '@PaymentsLiqPayRetailCrmBundle/Resources/config/annotations.yaml'
+analytics_retail_customer_history:
+ resource: '@AnalyticsRetailCustomerHistoryBundle/Resources/config/annotations.yaml'
+

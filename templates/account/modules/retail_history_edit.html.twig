@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки Аналитики загружаемой из RetailCRM{% endblock %}
+{% block stylesheets %}
+    <style>
+        .datepicker {
+            /* Appended to body, abs-pos off the page */
+            position: absolute;
+            display: none;
+            top: -9999em;
+            left: -9999em;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Настройки Аналитики загружаемой из RetailCRM</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+
+    {% if app.user %}
+
+    {% endif %}
+    <form class="needs-validation" name="settings_liqpay_{{ settingsDataItem.id }}" method="POST">
+        <div class="row">
+
+            <div class="card ">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Связать с аккаунтом RetailCRM:</h6>
+                </div>
+                <div class="card-body ">
+                    <select name="api_key" id="apiKey" class="form-select">
+                        <option selected>Выбрать API ключи RetailCRM</option>
+                        {% for connectionDataItem in connectionData %}
+                            <option value="{{ connectionDataItem.id }}"
+                                    {% if settingsDataItem.connectionId is defined
+                                        and settingsDataItem.connectionId == connectionDataItem.id %}
+                            selected {% endif %}>
+                                {{ connectionDataItem.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {# <input type="checkbox" class="form-check-input" name="mode" id="apiKey" #}
+                    {# value="test" {%  if connectionDataItem.settings.mode == "test"  %} checked{% endif %}> #}
+
+                </div>
+            </div>
+            <input type="hidden" class="form-control" name="module_name" id="module_name"
+                   value="{{ settingsDataItem.settings.moduleName }}" required>
+
+            <div class="card ">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Выберите дату для формирования отчета:</h6>
+                </div>
+                <div class="card-body ">
+                    <div class="input-group input-daterange " data-provide="datepicker">
+                        <span class="row-cols-1 input-group" style="width: 40px;">С: </span>
+                        <input type="text" class="col-2 form-control d-inline-block" id="start_date" name="date_start">
+                        <span class="row-cols-1 input-group d-inline-block" style="width: 40px;">ПО:</span>
+                        <input type="text" class="col-2 form-control" id="end_date" name="date_end">
+                        <div class="input-group-addon">
+                            <span></span>
+                        </div>
+                    </div>
+
+
+                <hr class="my-4">
+                <input type="hidden" name="id" value="{{ settingsDataItem.id }}"/>
+                <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+                <div class="col-12">
+                    <span class="col-2 d-inline-block">
+                  <button class="btn btn-outline-primary" type="submit" name="save_{{ settingsDataItem.id }}"><i
+                    class="fa fa-save"></i> Сохранить</button> </span>
+                    {# {% if modulesActivate == true %} #}
+                    <span class="col-3 d-inline-block">
+                <a href="{{ path('create_analytic_xls',{'codeModule':module.code,'id': settingsDataItem.id }) }}"
+                   class="btn btn-outline-success fn_excel" id="fn_excel">
+                    <i class="fa fa-link "></i> Excel отчет за период
+                </a>
+            </span>
+                    <span class="col-3 d-inline-block">
+                <a href="{{ path('create_analytic_xml',{'codeModule':module.code,'id': settingsDataItem.id }) }}"
+                   class="btn btn-outline-success fn_xml" id="fn_xml">
+                    <i class="fa fa-link "></i> XML отчет за период
+                </a>
+            </span>
+                </div>
+
+                <hr class="my-4">
+                <div class="col-12">
+                    <span class="col-2" style="width: 40px;"></span>
+                    <span class="col-2" style="width: 40px;"></span>
+                    <span class="col-2" id="link_file"></span>
+                    <span class="col-2"></span>
+                </div>
+        </div>
+        </div>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    <script>
+       $('.input-daterange').each (function () {
+            // $(this).datepicker('clearDates');
+            $('.input-daterange').datepicker({language: 'uk',clearBtn:true});
+        });
+
+       fn_xml = document.getElementById('fn_xml');
+       fn_xls = document.getElementById('fn_excel');
+         if (fn_xml || fn_xls) {
+
+             let startDate = document.getElementById("start_date");
+             let endDate = document.getElementById("end_date");
+             fn_xml.addEventListener('click', (event) => {
+
+               let formData = new FormData();
+               if (startDate.value && startDate.value!==''){
+                   formData.set('start_date', startDate.value);
+               }
+
+               if (endDate.value && endDate.value!==''){
+                     formData.set('end_date', endDate.value);
+                 }
+
+                fetch(fn_xml.getAttribute("href"), {
+                    method: 'post',
+                    body: formData,
+                    // headers: {
+                    //     "Content-type": "application/json; charset=UTF-8"
+                    // },
+                }).then((response) => {
+                        return response.json();
+                    }).then((body) => {
+                        document.getElementById('link_file').innerHTML = body;
+                        // cartTable.innerHTML = body['cartTable']['content'];
+                    });
+                 event.preventDefault();
+             });
+             fn_xls.addEventListener('click', (event) => {
+
+                 let formData = new FormData();
+                 if (startDate.value && startDate.value!==''){
+                     formData.set('start_date', startDate.value);
+                 }
+
+                 if (endDate.value && endDate.value!==''){
+                     formData.set('end_date', endDate.value);
+                 }
+
+                 fetch(fn_xls.getAttribute("href"), {
+                     method: 'post',
+                     body: formData,
+                     // headers: {
+                     //     "Content-type": "application/json; charset=UTF-8"
+                     // },
+                 }).then((response) => {
+                     return response.json();
+                 }).then((body) => {
+                     document.getElementById('link_file').innerHTML = body;
+                     // cartTable.innerHTML = body['cartTable']['content'];
+                 });
+                 event.preventDefault();
+             });
+         }
+    </script>
+{#    <script src="{{ asset('/assets/js/module_form.js') }}" ></script>#}
+{% endblock %}

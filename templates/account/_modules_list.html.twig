@@ -1,0 +1,12 @@
+<li class="nav-item">
+    <a class="nav-link" href="{{path("account_retail_list")}}">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>RetailCRM</span></a>
+</li>
+{%for list in modulesList %}
+<li class="nav-item">
+    <a class="nav-link" href="/account/module/{{list.code}}/list">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>{{list.name}}</span></a>
+</li>
+{%endfor%}

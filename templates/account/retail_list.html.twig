@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Список добавленых ключей API RetailCRM{% endblock %}
+ {% block stylesheets %}
+     <!-- Custom styles for this page -->
+
+ {% endblock %}
+{% block body %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Список добавленых ключей API RetailCRM</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="d-inline-block m-0 font-weight-bold text-primary"class="" style="width: 88%;/* float: left; */">Подключенные API</div>
+        <div class="d-inline-block">
+        <span class=""><a href="{{ path('retail_add_account') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                        class="fas fa-plus fa-sm text-white-50"></i> Добавить настройки</a></span>
+
+        </div>
+    </div>
+    <div class="card-body">
+    <div class="table-responsive">
+    {% if app.user %}
+      {% if repository %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">ApiKey</th>
+                <th scope="col">LoginUrl</th>
+                <th scope="col">-</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for repositoryItem in repository %}
+            <tr>
+                <th scope="row">{{ repositoryItem.id }}</th>
+                <td>{{ repositoryItem.Name }}</td>
+                <td>{{ repositoryItem.ApiKey }}</td>
+                <td>{{ repositoryItem.LoginUrl }}</td>
+                <td><a href="{{ path('retail_edit_account', {id:repositoryItem.id}) }}">
+                        <i class="fa fa-edit"></i></a> |
+                    <a href="{{ path('retail_delete_account', {id:repositoryItem.id}) }}"><i class="fa fa-eraser"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        </div>
+        </div>
+          {% endif %}
+    {% endif %}
+
+{% endblock %}

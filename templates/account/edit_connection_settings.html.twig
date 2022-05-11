@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление доступов API {% endblock %}
+ {% block stylesheets %}
+     <!-- Custom styles for this page -->
+
+ {% endblock %}
+{% block body %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Настройки API retailCRM</h1>
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+</div>
+    {% if app.user %}
+    {% if settings %}
+{#        {% for settingsItem in settings %}#}
+<form class="needs-validation" name="add_settings" action="{{ path('retail_edit_account', { id : settings.id }) }}" method="POST" >
+    <div class="col-12">
+        <label for="name_acc" class="form-label">Название Аккаунта</label>
+        <input type="text" class="form-control" name="name" id="name_acc" placeholder="аккаунт магазина №1" value="{{ settings.Name }}" required>
+        <div class="invalid-feedback">
+            Для удобсва поиска в системе
+        </div>
+    </div>
+    <div class="col-12">
+        <label for="link-acc" class="form-label">Ссылка на аккаунт</label>
+        <input type="text" class="form-control" name="url_retail" id="link-acc" placeholder="*.retailcrm.ru" value="{{ settings.LoginUrl}}" required>
+        <div class="invalid-feedback">
+            Путь для отправки запросов
+        </div>
+    </div>
+    <div class="col-12">
+        <label for="api-key" class="form-label">API ключ</label>
+        <input type="text" class="form-control" name="api_key" id="api-key" value="{{ settings.ApiKey}}" required>
+        <div class="invalid-feedback">
+            Введите Api ключ
+        </div>
+    </div>
+
+    <hr class="my-4">
+    <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+    <button class="w-100 btn btn-outline-success" type="submit"  name="save"><i class="fa fa-save"></i> Сохранить</button>
+</form>
+{#        {% endfor %}#}
+    {% endif %}
+    {% endif %}
+{% endblock %}

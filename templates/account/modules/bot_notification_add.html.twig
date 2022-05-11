@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки для модуля {{ module.name}}{% endblock %}
+ {% block stylesheets %}
+ {% endblock %}
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Настройки {{ module.name}}</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+    {% if app.user %}
+
+    {% endif %}
+
+        <form class="needs-validation" name="settings_liqpay" method="POST" >
+            <div class="form-check">
+                <label for="apiKey" class="form-label">Аккаунт RetailCRM</label>
+                <select name="api_key" id="apiKey" class="form-select">
+                    <option>Выберите аккаунт RetailCRM</option>
+                    {% for connectionDataItem in connectionData %}
+                        <option value="{{ connectionDataItem.id }}"
+                                {%  if settingsDataItem.settings.api is defined
+                                    and settingsDataItem.settings.api == connectionDataItem.id  %}
+                        selected {% endif %}>
+                            {{ connectionDataItem.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <hr class="my-4">
+            <div class="col-lg-12">
+                <label for="module_name" class="form-check-label">Название модуля в RetailCrm</label>
+                <input type="text" class="form-control" name="module_name" id="module_name" required>
+                
+            </div>
+            <br>
+            <div class="col-lg-12">
+                <label for="bot_name" class="form-check-label">Имя бота в RetailCrm</label>
+                <input type="text" class="form-control" name="bot_name" id="bot_name" required>
+                
+            </div>
+            <br>
+            <div class="col-12">
+                <label for="shop-id" class="form-label">Символьный код магазина в RetailCRM</label>
+                <input type="text" class="form-control" name="shop_id" id="shop-id" placeholder="Символьный код магазина в RetailCRM" >
+                    <div class="invalid-feedback">
+                        Ввыедите символьный код магазина
+                    </div>
+            </div>
+            
+
+            <hr class="my-4">
+            <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+            <input type="hidden" name="apiKeyBot" value=""/>
+            <input type="hidden" name="apiUrlBot" value=""/>
+            <button class="w-100 btn btn-outline-success" type="submit"  name="save">Сохранить</button>
+        </form>
+
+{% endblock %}
+    {% block javascripts %}
+    {% endblock %}

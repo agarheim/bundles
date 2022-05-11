@@ -1,0 +1,3 @@
+analytics_retail_customer_history:
+  resource: "@AnalyticsRetailCustomerHistoryBundle/Controller"
+  type: annotation

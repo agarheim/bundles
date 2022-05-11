@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки для модуля {{ module.name}}{% endblock %}
+ {% block stylesheets %}
+ {% endblock %}
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Настройки {{ module.name}}</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+    {% if app.user %}
+
+    {% endif %}
+
+        <form class="needs-validation" name="settings_liqpay" method="POST" >
+            <div class="form-check">
+                <label for="apiKey" class="form-label">Аккаунт RetailCRM</label>
+                <select name="api_key" id="apiKey" class="form-select">
+                    <option selected>Выбрать API ключи RetailCRM</option>
+                    {% for connectionDataItem in connectionData %}
+                    <option value="{{ connectionDataItem.id }}"
+                            {%  if settingsDataItem.connectionId is defined
+                                and settingsDataItem.connectionId == connectionDataItem.id  %}
+                                  selected {% endif %}>
+                        {{ connectionDataItem.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <hr class="my-4">
+            <div class="col-lg-12">
+                <label for="module_name" class="form-check-label">Название модуля в RetailCrm</label>
+                <input type="text" class="form-control" name="module_name" id="module_name" value="{{ settingsDataItem.settings.moduleName }}" required>
+                
+            </div>
+            <br>
+            <div class="col-lg-12">
+                <label for="bot_name" class="form-check-label">Имя бота в RetailCrm</label>
+                <input type="text" class="form-control" name="bot_name" id="bot_name" value="{{ settingsDataItem.settings.botName }}" required>
+                
+            </div>
+            <br>
+            <div class="col-12">
+                <label for="shop-id" class="form-label">Символьный код магазина в RetailCRM</label>
+                <input type="text" class="form-control" name="shop_id" id="shop-id" value="{{ settingsDataItem.settings.shop_id }}" placeholder="Символьный код магазина в RetailCRM" >
+                    <div class="invalid-feedback">
+                        Ввыедите символьный код магазина
+                    </div>
+            </div>
+            <hr class="my-4">
+            <input type="hidden" name="id" value="{{ settingsDataItem.id }}"/>
+            <input type="hidden" name="apiKeyBot" value="{{ settingsDataItem.settings.apiKeyBot }}"/>
+            <input type="hidden" name="apiUrlBot" value="{{ settingsDataItem.settings.apiUrlBot }}"/>
+            <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+            <div class="col-12">
+                <span class="col-2 d-inline-block">
+            <button class="btn btn-outline-primary" type="submit" name="save_{{ settingsDataItem.id }}"><i class="fa fa-save"></i> Сохранить</button>
+                </span>
+                <span class="col-2 d-inline-block">
+            <button class="btn btn-outline-danger" type="submit" name="dell" value="{{ settingsDataItem.id }}"><i class="fa fa-eraser"></i> Удалить</button>
+                </span>
+                {% if modulesActivate == true %}
+                    <span class="col-3 d-inline-block">
+                        <a href="{{ path('account_activate_module',{'codeModule':module.code,'id': settingsDataItem.id }) }}"
+                           class="btn btn-outline-success " >
+                            <i class="fa fa-link "></i> Добавить модуль
+                        </a>
+                    </span>
+                        <span class="col-3 d-inline-block">
+                        <a href="{{ path('account_deactivate_module',{'codeModule':module.code,'id': settingsDataItem.id }) }}"
+                           class="btn btn-outline-dark " >
+                            <i class="fa fa-link "></i> Деактивировать
+                        </a>
+                    </span>
+                {% endif %}
+            </div>
+        </form>
+        {% if modulesActivate == true %}
+            <br>
+            <div class="col-12">
+               <span class="">
+                Добавить в http запрос параметр clientId = {{settingsDataItem.variantId}}
+                </span>
+            </div>
+        {% endif %}
+
+
+{% endblock %}
+{% block javascripts %}
+{% endblock %}

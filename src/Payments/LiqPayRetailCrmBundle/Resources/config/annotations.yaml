@@ -1,0 +1,3 @@
+payments_liq_pay_retail_crm:
+  resource: "@PaymentsLiqPayRetailCrmBundle/Controller"
+  type: annotation

@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки для модуля MonoBank{% endblock %}
+ {% block stylesheets %}
+ {% endblock %}
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Настройки MonoBank</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+    {% if app.user %}
+
+    {% endif %}
+
+        <form class="needs-validation" name="settings" method="POST" >
+            <div class="form-check">
+                <label for="apiKey" class="form-label">Связать с аккаунтом RetailCRM</label>
+                <select name="api_key" id="apiKey" class="form-select">
+                    <option>Выбрать API ключи RetailCRM</option>
+                    {% for connectionDataItem in connectionData %}
+                        <option value="{{ connectionDataItem.id }}"
+                                {%  if settingsDataItem.settings.api is defined
+                                    and settingsDataItem.settings.api == connectionDataItem.id  %}
+                        selected {% endif %}>
+                            {{ connectionDataItem.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-check">
+                <label for="apiKey" class="form-label">Добавьте магазин(ы) для которого доступен модуль</label>
+                <a id="add_shops" onclick="return addField()" class="link-primary" ><i class="fa fa-plus-square"></i></a>
+
+            </div>
+            <div class="form-check row-lg-12">
+                <div class="row-cols-lg-1 d-inline-block" style="width: 10%">активен</div>
+                <div class="row-cols-lg-3 d-inline-block" style="width: 40%">название магазина</div>
+                <div class="row-cols-lg-3 d-inline-block" style="width: 40%">символьный код</div>
+            </div>
+            <div id="shops" class="flex-nowrap shops">
+                <div class="input-group mb-3">
+                    <div class="input-group-text"><input type="checkbox" class=" mt-0" name="shop_name[0][active]" id="shop-code-1" value="active"></div>
+                    <input type="text" class="form-control" name="shop_name[0][name]" id="shop-name-1" value="" required>
+                    <input type="text" class="form-control" name="shop_name[0][code]" id="shop-code-1" value="" data-index="1" required><a class="input-group-text"  href="#"> </a>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="col-lg-12">
+                <input type="text" class="form-control" name="module_name" id="module_name" required>
+                <label for="module_name" class="form-check-label">Название модуля в RetailCrm</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="mode" id="mode" value="test">
+                <label for="mode" class="form-check-label">Тестовый режим работы модуля</label>
+            </div>
+            <hr class="my-4">
+            <div class="col-12">
+                <label for="shop-id" class="form-label">Название магазина в RetailCRM</label>
+                <input type="text" class="form-control" name="shopName" id="shop-id" placeholder="Название магазина в RetailCRM" required>
+                    <div class="invalid-feedback">
+                        Введите название магазина
+                    </div>
+            </div>
+            <div class="col-12">
+                <label for="api_token" class="form-label">API для получения информации о выписки и состояние лицевого
+                    счета. Для предоставления доступа нужно пройти авторизацию в личном кабинете <a href="https://api.monobank.ua/" class="link-primary" target="_blank">https://api.monobank.ua/</a> и получить токен для персонального использования.</label>
+                <input type="text" class="form-control" name="api_token" id="api_token" placeholder="API токен " required>
+                <div class="invalid-feedback">
+
+                </div>
+            </div>
+            <div class="col-12">
+                <label for="invoice-link" class="form-label">Ссылка на пополнение карты MonoBank. (Можно определить в разделе Пополнить карту -> Пополнить карту по ссылке)</label>
+                <input type="text" class="form-control" name="invoice_link" id="invoice-link" value="https://send.monobank.ua" placeholder="ссылка " required>
+                <div class="invalid-feedback">
+
+                </div>
+            </div>
+            <div class="col-12">
+                    <label for="invoice_lifetime_hours" class="form-label">Время актуальности счета(Часов)</label>
+                    <input type="text" class="form-control" name="invoice_lifetime_hours" id="invoice_lifetime_hours" placeholder="24" required>
+                    <div class="invalid-feedback">
+                        Пожалуйства заполните время жизни заказа.
+                    </div>
+                </div>
+            <div class="col-12">
+                <div class="col-6 d-inline-block">
+                   <label for="description" class="form-label">Поле "комментарий" к счету</label>
+                    <textarea class="form-control d-inline-block" name="description" id="description"
+                              placeholder="Оплата по заказу" required>#^orderNumber^</textarea>
+                    <span class="d-inline-block"> Для подстановки в текст комментария шаблона
+                        <ul><li>название магазина ^shopName^</li>
+                            <li>номера заказа ^orderNumber^</li></ul>
+                    </span>
+                    <div class="invalid-feedback">Заполните описание к выставленному счету</div>
+
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="col-lg-12">
+                <label for="ID_manager" class="form-check-label">ID менеджер в RetailCrm</label>
+                <input type="text" class="form-control" name="managerId" id="ID_manager" >
+            </div>
+            <div class="form-check">
+                <label for="set-task" class="form-check-label">Создавать задачу на менеджера ( введите ID менеджера в системе RetailCRM. Посмотреть его можно адресной строке браузера https://Ваш аккаунт.retailcrm.ru/admin/users/ID нужного менеджера/edit#t-main)</label>
+                <input type="checkbox" class="form-check-input" name="taskToManagerOn" id="set-task" value="test">
+            </div>
+
+            <hr class="my-4">
+            <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+            <button class="w-100 btn btn-outline-success" type="submit"  name="save">Сохранить</button>
+        </form>
+
+{% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('/assets/js/module_form.js') }}" ></script>
+    {% endblock %}

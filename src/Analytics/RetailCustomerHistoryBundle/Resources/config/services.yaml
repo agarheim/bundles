@@ -1,0 +1,9 @@
+parameters:
+  AnalyticsRetailCustomerHistoryBundle:
+    name: RetailCustomerHistory
+    code: retail_history
+  
+services:
+  App\Analytics\RetailCustomerHistoryBundle\Command\CronGetHistoryCommand:
+     tags:
+        - { name: 'console.command', command: 'app:run-get-history' }

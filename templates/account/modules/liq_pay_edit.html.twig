@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки для модуля LiqPay{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Настройки LiqPay</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+
+    {% if app.user %}
+
+    {% endif %}
+
+    <form class="needs-validation" name="settings_liqpay_{{ settingsDataItem.id }}" method="POST" >
+        <div class="col-12">
+                <label for="apiKey" class="form-label">Связать с аккаунтом RetailCRM</label>
+                <select name="api_key" id="apiKey" class="form-select">
+                    <option selected>Выбрать API ключи RetailCRM</option>
+                    {% for connectionDataItem in connectionData %}
+                    <option value="{{ connectionDataItem.id }}"
+                            {%  if settingsDataItem.connectionId is defined
+                                and settingsDataItem.connectionId == connectionDataItem.id  %}
+                                  selected {% endif %}>
+                        {{ connectionDataItem.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+{#                    <input type="checkbox" class="form-check-input" name="mode" id="apiKey"#}
+{#                       value="test" {%  if connectionDataItem.settings.mode == "test"  %} checked{% endif %}>#}
+
+            </div>
+        <div class="form-check">
+            <label for="apiKey" class="form-label">Добавьте магазин(ы) для которого доступен модуль</label>
+            <a id="add_shops" onclick="return addField()" class="link-primary" ><i class="fa fa-plus-square"></i></a>
+
+        </div>
+        <div class="form-check row-lg-12">
+            <div class="row-cols-lg-1 d-inline-block" style="width: 10%">активен</div>
+            <div class="row-cols-lg-3 d-inline-block" style="width: 40%">название магазина</div>
+            <div class="row-cols-lg-3 d-inline-block" style="width: 40%">символьный код</div>
+        </div>
+        <div id="shops" class="flex-nowrap shops">
+            <div class="input-group mb-3">
+                {% set index_s = 0 %}
+            {% for shopsItem in shopsLists %}
+                <div class="input-group mb-3">
+                    <div class="input-group-text"><input type="checkbox" class="mt-0"
+                                                         name="shop_name[{{ loop.index }}][active]" id="shop-code-1" value="active"
+                        {% if  shopsItem.active == true %}
+                            checked
+                                {% endif %}
+                        ></div>
+                    <input type="text" class="form-control" name="shop_name[{{ loop.index }}][name]" id="shop-name-1" value="{{ shopsItem.name }}" required>
+                    <input type="text" class="form-control" name="shop_name[{{ loop.index }}][code]" id="shop-code-1" data-index="{{ loop.index }}" value="{{ shopsItem.code }}" required>
+                    <a onclick="return deleteField(this)" class="input-group-text" href="#"><i class="fa fa-times"></i></a>
+                </div>
+                {% if loop.last %}
+                    {% set index_s = loop.index+1 %}
+                {% endif %}
+            {% endfor %}
+                <div class="input-group-text"><input type="checkbox" class=" mt-0" name="shop_name[ {{ index_s }}][active]" id="shop-code-1" value="active"></div>
+                <input type="text" class="form-control" name="shop_name[{{ index_s }}][name]" id="shop-name-1" value="" >
+                <input type="text" class="form-control" name="shop_name[{{ index_s }}][code]" id="shop-code-1" value="" data-index="{{ index_s }}" >
+                <a class="input-group-text"  href="#"> </a>
+            </div>
+        </div>
+
+        <hr class="my-4">
+        <div class="col-lg-12">
+            <input type="text" class="form-control" name="module_name" id="module_name"
+                   value="{{ settingsDataItem.settings.moduleName }}" required>
+            <label for="module_name" class="form-check-label">Название модуля в RetailCrm</label>
+        </div>
+        <div class="col-lg-12">
+            <input type="checkbox" class="form-check-input " name="mode" id="mode_{{ settingsDataItem.id }}"
+                   value="test" {%  if settingsDataItem.settings.mode == "test"  %} checked{% endif %}>
+            <label for="mode_{{ settingsDataItem.id }}" class="form-check-label">Тестовый режим работы</label>
+        </div>
+        <hr class="my-4">
+        <div class="col-sm-6 d-inline-block">
+            <label for="sandbox_public_key" class="form-label">Тестовый открытый ключ liqpay</label>
+            <input type="text" class="form-control" name="sandbox_public_key" id="sandbox_public_key"
+                   placeholder="тестовые ключи liqpay" value="{{ settingsDataItem.settings.sandbox_public_key }}" required>
+            <div class="invalid-feedback">
+                Для работы системы в тестовом режиме добавьте тестовые ключи
+            </div>
+        </div>
+        <div class="col-sm-6 d-inline-block">
+            <label for="sandbox_private_key" class="form-label">Тестовый открытый ключ liqpay</label>
+            <input type="text" class="form-control" name="sandbox_private_key" id="sandbox_private_key"
+                   placeholder="тестовые ключи liqpay" value="{{ settingsDataItem.settings.sandbox_private_key }}" required>
+            <div class="invalid-feedback">
+                Для работы системы в тестовом режиме добавьте тестовые ключи
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="shop-id" class="form-label">Символьный код магазина в RetailCRM</label>
+            <input type="text" class="form-control" name="shop_id" id="shop-id"
+                   placeholder="Символьный код магазина в RetailCRM" value="{{ settingsDataItem.settings.shop_id }}" required>
+            <div class="invalid-feedback">
+                Введите символьный код магазина
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="public_key" class="form-label">Открытый ключ для LiqPay</label>
+            <input type="text" class="form-control" name="public_key" id="public_key"
+                   placeholder="Открытый ключ для LiqPay" value="{{ settingsDataItem.settings.public_key }}" required>
+            <div class="invalid-feedback">
+                Открытый ключ для LiqPay
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="private_key" class="form-label">Закрытый ключ для LiqPay</label>
+            <input type="text" class="form-control" name="private_key" id="private_key"
+                   placeholder="Закрытый ключ для LiqPay" value="{{ settingsDataItem.settings.private_key }}" required>
+            <div class="invalid-feedback">
+                Закрытый ключ для LiqPay
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label for="email_default" class="form-label">Email <span class="text-muted">Адрес на который прийдет сообщение, если у пользователя не указан почтовый ящик</span></label>
+            <input type="email" name="email_default" class="form-control" id="email_default"
+                   value="{{ settingsDataItem.settings.email_default }}" placeholder="you@example.com">
+            <div class="invalid-feedback">
+                Введите корректный почтовый адресс.
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="phone_default" class="form-label">Номер телефона <span class="text-muted">Телефон на который прийдет сообщение, если у пользователя не указан телефон</span></label>
+            <input type="tel" name="phone_default" class="form-control" id="phone_default" value="{{ settingsDataItem.settings.phone_default }}" placeholder="+380-00-000-00-00">
+            <div class="invalid-feedback">
+                Введите телефон.
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h4 class="mb-3">Куда отправлять Счет:</h4>
+        <div class="col-lg-12">
+            <div class="form-check_{{ settingsDataItem.id }}">
+                <input id="field_for_send_email_{{ settingsDataItem.id }}" name="field_for_send" type="radio" value="email"
+                       class="form-check-input" {%  if settingsDataItem.settings.field_for_send == "email"  %} checked{% endif %} >
+                <label class="form-check-label" for="field_for_send_email_{{ settingsDataItem.id }}">Email</label>
+            </div>
+            <div class="form-check_{{ settingsDataItem.id }}">
+                <input id="field_for_send_phone_{{ settingsDataItem.id }}" name="field_for_send" type="radio" value="phone" class="form-check-input"
+                        {%  if settingsDataItem.settings.field_for_send == "phone"  %} checked{% endif %}>
+                <label class="form-check-label" for="field_for_send_phone_{{ settingsDataItem.id }}">Телефон</label>
+            </div>
+        </div>
+        <hr class="my-4">
+
+        <h4 class="mb-3">Куда отправлять Счет(если у покупателя не заполнено выбранное):</h4>
+        <div class="col-lg-12">
+            <div class="form-check_{{ settingsDataItem.id }}">
+                <input id="field_for_send_default_email_{{ settingsDataItem.id }}" name="field_for_send_default" type="radio" value="email"
+                       class="form-check-input" {%  if settingsDataItem.settings.field_for_send_default == "email"  %} checked{% endif %}>
+                <label class="form-check-label" for="field_for_send_default_email">Email</label>
+            </div>
+            <div class="form-check_{{ settingsDataItem.id }}">
+                <input id="field_for_send_default_phone_{{ settingsDataItem.id }}" name="field_for_send_default" type="radio" value="phone"
+                       class="form-check-input" {%  if settingsDataItem.settings.field_for_send_default == "phone"  %} checked{% endif %}>
+                <label class="form-check-label" for="field_for_send_default_phone">Телефон</label>
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="invoice_lifetime_hours" class="form-label">Время актуальности счета(Часов)</label>
+            <input type="text" class="form-control" name="invoice_lifetime_hours" id="invoice_lifetime_hours" placeholder="24"
+                   value="{{ settingsDataItem.settings.invoice_lifetime_hours }}" required>
+            <div class="invalid-feedback">
+                Пожалуйства заполните время жизни заказа.
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="description" class="form-label">Описание при выставлении счета</label>
+            <input type="text" class="form-control" name="description" id="description" placeholder="Оплата по заказу"
+                   value="{{ settingsDataItem.settings.description }}" required>
+            <div class="invalid-feedback">
+                Заполните описание к выставленному счету
+            </div>
+        </div>
+        <hr class="my-4">
+        <input type="hidden" name="id" value="{{ settingsDataItem.id }}"/>
+        <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
+        <div class="col-12">
+            <span class="col-2 d-inline-block">
+        <button class="btn btn-outline-primary" type="submit" name="save_{{ settingsDataItem.id }}"><i class="fa fa-save"></i> Сохранить</button>
+            </span>
+            <span class="col-2 d-inline-block">
+        <button class="btn btn-outline-danger" type="submit" name="dell" value="{{ settingsDataItem.id }}"><i class="fa fa-eraser"></i> Удалить</button>
+            </span>
+            {% if modulesActivate == true %}
+            <span class="col-3 d-inline-block">
+                <a href="{{ path('account_activate_module',{'codeModule':module.code,'id': settingsDataItem.id }) }}"
+                   class="btn btn-outline-success " >
+                    <i class="fa fa-link "></i> Добавить модуль
+                </a>
+            </span>
+                <span class="col-3 d-inline-block">
+                <a href="{{ path('account_deactivate_module',{'codeModule':module.code,'id': settingsDataItem.id }) }}"
+                   class="btn btn-outline-dark " >
+                    <i class="fa fa-link "></i> Деактивировать
+                </a>
+            </span>
+            {% endif %}
+        </div>
+    </form>
+
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('/assets/js/module_form.js') }}" ></script>
+{% endblock %}

@@ -1,0 +1,6 @@
+parameters:
+  PaymentsLiqPayRetailCrmBundle:
+    name: LiqPay
+    code: liq_pay
+
+

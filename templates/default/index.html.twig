@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %} Страница со списком продуктов {% endblock %}
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Главная</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    class="fas fa-download fa-sm text-white-50"></i> Логирование ошибок(на подумать)</a>
+    </div>
+    <div class="container">
+    {% if app.user %}
+        <div class="row">
+            <div class="col-4">
+            <a href="{{ path('retail_account') }}">
+                <img class="img-profile" width="360" src="{{ asset('/assets/img/retailcrm_bb.png') }}" alt="Настройки RetailCRM">
+            </a>
+            </div>
+            <div class="col-4">
+           <a href="{{ path('module_liqpay_account') }}">
+               <img class="img-profile "src="{{ asset('/assets/img/liqpay.png') }}" alt="Настройки LiqPay">
+           </a>
+            </div>
+        </div>
+        {% else %}
+            <div class="mb-3">
+                Вы не вошли в систему, <a href="{{ path('app_login') }}">Войти</a>
+            </div>
+    {% endif %}
+    </div>
+{% endblock %}
